@@ -33,34 +33,34 @@ If you are new to the code, read these sections in order:
 This diagram uses Mermaid, which GitHub renders directly in the README. It describes the running application rather than a separate design mock-up.
 
 ```mermaid
-flowchart TB
-    subgraph Browser[Customer or developer browser]
-        UI["React dashboard<br/>src/App.jsx"]
-        Elements["Stripe Elements and Stripe.js<br/>collect and confirm test payment details"]
+flowchart LR
+    subgraph Browser
+        UI[React dashboard]
+        Elements[Stripe Elements and Stripe.js]
     end
 
-    subgraph AppServer[PulsePay Node.js API]
-        Routes["API routes<br/>catch-all handler"]
-        Guard["Input checks, idempotency key<br/>Stripe test-mode guard"]
-        Webhook["Webhook signature check<br/>replay-age check, deduplication"]
-        Metrics["Outbound request timing<br/>and percentile summaries"]
+    subgraph Server
+        Routes[API catch-all handler]
+        Guard[Input validation and idempotency]
+        Webhook[Webhook signature and deduplication]
+        Metrics[Request timing and percentiles]
     end
 
-    Stripe["Stripe test-mode API<br/>and webhook delivery"]
-    Store[("Optional Neon Postgres<br/>payment metadata, event IDs, timings")]
-    Memory[("Fallback process memory<br/>resets when process restarts")]
+    Stripe[Stripe test API]
+    Store[(Optional Neon database)]
+    Memory[(Fallback process memory)]
 
-    UI -->|same-origin JSON requests| Routes
+    UI -->|JSON requests| Routes
     Routes --> Guard
-    Guard -->|create or retrieve PaymentIntent with server-only secret key| Stripe
-    Guard -->|client secret returned| UI
-    UI -->|payment details go directly through Stripe.js| Elements
-    Elements -->|confirm test PaymentIntent| Stripe
-    Stripe -->|signed Stripe-Signature request| Webhook
-    Webhook -->|verified metadata| Store
-    Webhook -->|when database is absent| Memory
+    Guard -->|server API| Stripe
+    Guard -->|client secret| UI
+    UI --> Elements
+    Elements -->|confirm payment| Stripe
+    Stripe -->|signed webhook| Webhook
+    Webhook -->|when configured| Store
+    Webhook -->|otherwise| Memory
     Metrics --> Store
-    Metrics -->|when database is absent| Memory
+    Metrics -->|otherwise| Memory
     Guard --> Metrics
 ```
 
