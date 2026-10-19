@@ -4,6 +4,8 @@
 
 > **Live app:** [pulsepay-payment-performance-lab.vercel.app](https://pulsepay-payment-performance-lab.vercel.app) · **Repository:** [rithika20252024/pulsepay-payment-performance-lab](https://github.com/rithika20252024/pulsepay-payment-performance-lab)
 
+> **Deployment status:** The latest code is on `main`. The existing Vercel URL still serves the previous build because the Vercel connection currently rejects deployment access for this team; redeploy after reconnecting Vercel to publish this version.
+
 The hosted app runs in demo mode until test credentials are configured. Example records are labelled sample data. No real payments are processed. This is an integration and learning tool, not a payment processor, production monitoring system, or load-testing tool.
 
 ## Why this exists
