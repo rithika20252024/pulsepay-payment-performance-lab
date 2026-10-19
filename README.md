@@ -77,17 +77,26 @@ flowchart TB
 | Database schema | Optional tables for payment metadata, events, and request timings | `db/schema.sql` |
 | Vercel setup | Builds the frontend and deploys the serverless API | `vercel.json` |
 
-## Languages and tools
+## Tech stack
 
-- **JavaScript (ES modules and Node.js):** API logic, local server, and application behavior.
-- **JSX:** React components and markup in `.jsx` files. The project uses JavaScript, not TypeScript.
-- **CSS:** Responsive dashboard styling in `src/styles.css`.
-- **SQL:** Optional Neon Postgres schema in `db/schema.sql`.
-- **React 18:** Builds the interactive browser interface.
-- **Vite:** Runs the frontend during development and produces the static production bundle.
-- **Stripe PaymentIntents API and Stripe.js:** Create and confirm payments in test mode.
-- **Neon serverless driver (optional):** Stores event and timing metadata in Postgres.
-- **Vercel:** Hosts the static frontend and Node.js serverless API.
+PulsePay uses a small JavaScript stack with separate browser and server responsibilities. The browser never needs the Stripe secret key; payment details are handled by Stripe.js, while the Node.js API uses the secret key for server-to-server requests.
+
+| Layer | Technology | How PulsePay uses it |
+| --- | --- | --- |
+| Language | JavaScript (ES modules and Node.js) | UI behavior, local server, API routes, and payment/webhook logic. The codebase is JavaScript, not TypeScript. |
+| UI markup | JSX | React component markup in `.jsx` files. Vite transforms JSX during development and build. |
+| Frontend | React 18, React DOM | Renders the payment desk and manages its browser-side state. |
+| Styling | CSS | Responsive dashboard styles in `src/styles.css`; no CSS framework is configured. |
+| Frontend tooling | Vite 6, `@vitejs/plugin-react` | Local dev server, `/api` proxy, and production bundle generation. |
+| Local process runner | `concurrently` | Starts the local Node API and Vite dev server together with `npm run dev`. |
+| Payments | Stripe PaymentIntents API, Stripe.js, `@stripe/react-stripe-js` | Creates PaymentIntents on the server and confirms them in the browser with Stripe Elements, using test mode. |
+| Icons | `lucide-react` | Supplies the dashboard's interface icons. |
+| API runtime | Node.js built-in HTTP server locally; Vercel Node.js Function when deployed | Runs the shared API handler in `api/[...path].js`. The project does not use Express. |
+| Optional database | Neon Postgres and `@neondatabase/serverless` | Persists payment metadata, verified event IDs, and request timing samples when `DATABASE_URL` is set. |
+| Database language | SQL | Defines the optional tables and indexes in `db/schema.sql`. |
+| Hosting | Vercel | Serves the built static frontend and routes `/api/*` to the Node.js Function. |
+
+**At a glance:** React + JSX + CSS in the browser → same-origin JSON API → Stripe test mode. Neon Postgres is optional; without it, bounded in-process buffers are used and can reset when the serverless instance is recycled.
 
 ## What happens during a test payment?
 
