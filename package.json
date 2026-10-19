@@ -1,8 +1,28 @@
 {
-  "name": "pulsepay-payment-performance-lab",
-  "version": "1.0.0",
+  "name": "pulsepay-payment-reliability-desk",
+  "version": "2.0.0",
   "private": true,
-  "description": "A payment performance lab with Stripe test-mode checkout and latency instrumentation.",
-  "scripts": { "start": "node server.js", "dev": "node --watch server.js" },
-  "engines": { "node": ">=20" }
+  "description": "A Stripe test-mode workbench for payment recovery, webhook delivery, and API latency.",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "node --watch server.js",
+    "dev:web": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "start": "node server.js",
+    "preview": "vite preview"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@stripe/react-stripe-js": "^3.1.1",
+    "@stripe/stripe-js": "^5.5.0",
+    "concurrently": "^9.1.2",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.7"
+  }
 }
