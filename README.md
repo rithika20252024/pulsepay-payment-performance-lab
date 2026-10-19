@@ -35,26 +35,26 @@ This diagram uses Mermaid, which GitHub renders directly in the README. It descr
 ```mermaid
 flowchart TB
     subgraph Browser[Customer or developer browser]
-        UI[React dashboard\nsrc/App.jsx]
-        Elements[Stripe Elements and Stripe.js\ncollect and confirm test payment details]
+        UI["React dashboard<br/>src/App.jsx"]
+        Elements["Stripe Elements and Stripe.js<br/>collect and confirm test payment details"]
     end
 
     subgraph AppServer[PulsePay Node.js API]
-        Routes[API routes\napi/[...path].js]
-        Guard[Input checks, idempotency key,\nStripe test-mode guard]
-        Webhook[Webhook signature check,\nreplay-age check, deduplication]
-        Metrics[Outbound request timing\nand percentile summaries]
+        Routes["API routes<br/>catch-all handler"]
+        Guard["Input checks, idempotency key<br/>Stripe test-mode guard"]
+        Webhook["Webhook signature check<br/>replay-age check, deduplication"]
+        Metrics["Outbound request timing<br/>and percentile summaries"]
     end
 
-    Stripe[Stripe test-mode API\nand webhook delivery]
-    Store[(Optional Neon Postgres\npayment metadata, event IDs, timings)]
-    Memory[(Fallback process memory\nresets when process restarts)]
+    Stripe["Stripe test-mode API<br/>and webhook delivery"]
+    Store[("Optional Neon Postgres<br/>payment metadata, event IDs, timings")]
+    Memory[("Fallback process memory<br/>resets when process restarts")]
 
     UI -->|same-origin JSON requests| Routes
     Routes --> Guard
-    Guard -->|create or retrieve PaymentIntent\nwith server-only secret key| Stripe
+    Guard -->|create or retrieve PaymentIntent with server-only secret key| Stripe
     Guard -->|client secret returned| UI
-    UI -->|payment details go directly\nthrough Stripe.js| Elements
+    UI -->|payment details go directly through Stripe.js| Elements
     Elements -->|confirm test PaymentIntent| Stripe
     Stripe -->|signed Stripe-Signature request| Webhook
     Webhook -->|verified metadata| Store
