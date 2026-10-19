@@ -14,7 +14,15 @@ const stripeClient = new Map();
 
 async function api(path, options) {
   const response = await fetch(`/api/${path}`, options);
-  const data = await response.json();
+  const body = await response.text();
+  let data;
+  try { data = body ? JSON.parse(body) : {}; }
+  catch {
+    const message = response.status === 404
+      ? 'This API route is missing from the current deployment. Wait for the latest deployment, then refresh.'
+      : `The API returned an unexpected response (HTTP ${response.status}).`;
+    throw Object.assign(new Error(message), { data: { code: 'non_json_api_response' }, status: response.status });
+  }
   if (!response.ok) throw Object.assign(new Error(data.error || 'Request failed'), { data, status:response.status });
   return data;
 }
